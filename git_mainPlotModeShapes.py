@@ -71,8 +71,6 @@ def scalePoints(mode,points,scaleFactor,plotRealSensors=0):
     modeMatrix_horizontal[2,0] = mode[1]*scaleFactor
     modeMatrix_horizontal[2,1] = mode[3]*scaleFactor
     
-    print(modeMatrix_horizontal)
-    
  
     gridMatIndex = [0,2,4,6,8]
     copyIndex = [0,1,2,3,4]
@@ -418,17 +416,17 @@ def git_plotModeShapeComplexityHorizontal(modeShape):
     
     
     
-    newArrRe = np.zeros((len(realValues)))
-    newArrIm = np.zeros((len(realValues)))
+    newArrRe = np.zeros((len(realValues)*2))
+    newArrIm = np.zeros((len(realValues)*2))
     oldArrIndex = 0
-    for i in range(len(newArrIm)):
+    for i in range(1,len(newArrIm),2):
         newArrRe[i] = realValues[oldArrIndex]
         newArrIm[i] = imagValues[oldArrIndex]
         oldArrIndex +=1
         
     #plt.figure(title)
     for i in range(0,len(newArrIm)-1):
-        print(newArrRe[i])
+        
         plt.plot([newArrRe[i],newArrRe[i+1]],[newArrIm[i],newArrIm[i+1]],'g')
     
     

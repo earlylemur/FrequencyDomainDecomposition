@@ -8,6 +8,7 @@ Created on 28. jul. 2018
 import numpy as np
 import pandas as pd
 import os, errno
+import sys
 
 
 def createVerticalModeShapeFDD(mat1,mat2,mat3,mat4):
@@ -111,4 +112,4 @@ def createFolder(folderPathAndName):
     
     
 def git_setCurrentDirectory():
-    os.chdir('C:\Users\Ole-Martin\Documents\00 - Master\Python\FDD_project\src\FrequencyDomainDecomposition')
+    sys.path.insert(0,'C:/Users/Ole-Martin/Documents/00 - Master/Python/FDD_project/src/FrequencyDomainDecomposition')

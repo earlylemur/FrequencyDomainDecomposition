@@ -110,3 +110,5 @@ def createFolder(folderPathAndName):
             raise
     
     
+def git_setCurrentDirectory():
+    os.chdir('C:\Users\Ole-Martin\Documents\00 - Master\Python\FDD_project\src\FrequencyDomainDecomposition')

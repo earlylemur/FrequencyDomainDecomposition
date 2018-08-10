@@ -10,6 +10,8 @@ import git_FDDtools
 from matplotlib import pyplot as plt
 import sys
 import git_mainPlotModeShapes
+
+git_FDDtools.git_setCurrentDirectory
 points = git_FDDtools.createMatrixFromCsv("sensorPointLocations.txt")
 
 totMat1 = git_FDDtools.createMatrixFromCsv('sensor1.txt')

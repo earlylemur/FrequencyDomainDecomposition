@@ -113,3 +113,6 @@ def createFolder(folderPathAndName):
     
 def git_setCurrentDirectory():
     sys.path.insert(0,'C:/Users/Ole-Martin/Documents/00 - Master/Python/FDD_project/src/FrequencyDomainDecomposition')
+
+
+git_setCurrentDirectory()

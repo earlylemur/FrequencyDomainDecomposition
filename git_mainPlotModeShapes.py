@@ -16,7 +16,9 @@ from scipy.signal import butter, lfilter,stft, periodogram, welch,csd
 
 
 
+import git_FDDtools
 
+git_FDDtools.git_setCurrentDirectory()
 
 
 
@@ -49,9 +51,9 @@ def plotSensorLocation_horizontal(points,plotRealSensors=0):
     if(plotRealSensors == 1):    
         realSensorListX = [gridMatX[1,0],gridMatX[2,0],gridMatX[3,0],gridMatX[2,1]]
         realSensorListY = [gridMatY[1,0],gridMatY[2,0],gridMatY[3,0],gridMatY[2,1]]
-        sensorID = ['71','72','73','75']
-        for i in range(len(realSensorListX)):
-            plt.text(realSensorListX[i], realSensorListY[i], '%s' % sensorID[i] ,size = 10)
+        sensorID = ['1','2','3','4']
+        #for i in range(len(realSensorListX)):
+        #    plt.text(realSensorListX[i], realSensorListY[i], '%s' % sensorID[i] ,size = 10)
         
     
     plt.xlabel('Global X')
@@ -71,6 +73,8 @@ def scalePoints(mode,points,scaleFactor,plotRealSensors=0):
     modeMatrix_horizontal[2,0] = mode[1]*scaleFactor
     modeMatrix_horizontal[2,1] = mode[3]*scaleFactor
     
+    sensorID = ['1','2','3','4']
+    
  
     gridMatIndex = [0,2,4,6,8]
     copyIndex = [0,1,2,3,4]
@@ -89,9 +93,9 @@ def scalePoints(mode,points,scaleFactor,plotRealSensors=0):
     if(plotRealSensors == 1):    
         realSensorListX = [gridMatX[1,0],gridMatX[2,0],gridMatX[3,0],gridMatX[2,1]]
         realSensorListY = [gridMatY[1,0],gridMatY[2,0],gridMatY[3,0],gridMatY[2,1]]
-        sensorID = ['3971','3972','3973','3975']
+        
         for i in range(len(realSensorListX)):
-            plt.text(realSensorListX[i], realSensorListY[i], '%s' % sensorID[i] ,size = 28)
+            plt.text(realSensorListX[i], realSensorListY[i], '%s' % sensorID[i] ,size = 20)
             plt.plot(realSensorListX[i], realSensorListY[i],'o',zorder = 2)
         
     
@@ -186,31 +190,75 @@ def plotModeShapeComplexityVertical(modeShape,title):
     plt.axvline(x=0, color='k')
 
 
-def scalePointsVertical_SingleZ(Vmode,points,scaleFactor,plotRealSensors=0):
+def plotModeShapeComplexityVertical_onlyZ(modeShape):
+    
+    
+
+    realValuesZ = []
+    imagValuesZ = []
+    
+    
+    for i in range(len(modeShape)):
+        number = complex(modeShape[i])
+        realValuesZ.append(number.real)
+        imagValuesZ.append(number.imag)
+    
+
+    
+    newArrReZ = np.zeros((len(realValuesZ)*2))
+    newArrImZ = np.zeros((len(realValuesZ)*2))
+    oldArrIndex = 0
+    for i in range(1,len(newArrImZ),2):
+
+        newArrReZ[i] = realValuesZ[oldArrIndex]
+        newArrImZ[i] = imagValuesZ[oldArrIndex]
+        oldArrIndex +=1
+        
+    
+    for i in range(0,len(newArrImZ),2):
+        plt.plot([newArrReZ[i],newArrReZ[i+1]],[newArrImZ[i],newArrImZ[i+1]],'g')
+        
+    
+    sensorID = ['1','2','3','4']
+    for i in range(len(imagValuesZ)):
+
+        plt.text(realValuesZ[i], imagValuesZ[i], '%s' % sensorID[i] ,size = 20)
+    
+ 
+    plt.plot(realValuesZ,imagValuesZ,'o')
+    plt.grid()
+    plt.xlabel('Re', size = 20)
+    plt.ylabel('Im', size = 20)
+    plt.ylim(-0.7,0.7)
+    plt.xlim(-0.7,0.7)
+    plt.axhline(y=0, color='k')
+    plt.axvline(x=0, color='k')
+
+
+def scalePointsVertical_SingleZ(Vmode,points,scaleFactor=20000,plotRealSensors=0):
     #This is a function adapted for the visualization of horizontal mode shapes. Displacements in the Y-direction will be scaled only.
     
-    realMode = np.ones(4)
-    for i in range(2,6):
-        print(i)
-        thatComplexNumb = complex(Vmode[i])
-        thatRealNumb = thatComplexNumb.real
-        realMode[i-2] = thatRealNumb
-
-
-
+    sensorID = ['1','2','3','4']
+    plotGridRows = 5
+    plotGridCols = 2
+    modeMatrix_VZ = np.ones((plotGridRows,plotGridCols))
+    numbSensors = len(Vmode)
     
+    realVal = []
 
-    
-    modeMatrix_VZ = np.ones((5,2))
-    
-  
+    for i in range(numbSensors):
+        number = np.complex64(Vmode[i])
+        realVal.append(number.real)
+        
 
     modeMatrix_VZ[0,:] = 0
+    
+    modeMatrix_VZ[1,:] = int(realVal[0]*scaleFactor)
+    modeMatrix_VZ[3,:] = int(realVal[2]*scaleFactor)
+    modeMatrix_VZ[2,0] = int(realVal[1]*scaleFactor)
+    modeMatrix_VZ[2,1] = int(realVal[3]*scaleFactor)
+    
     modeMatrix_VZ[4,:] = 0
-    modeMatrix_VZ[1,:] = realMode[0]*scaleFactor
-    modeMatrix_VZ[3,:] = realMode[2]*scaleFactor
-    modeMatrix_VZ[2,0] = realMode[1]*scaleFactor
-    modeMatrix_VZ[2,1] = realMode[3]*scaleFactor
    
   
  
@@ -219,18 +267,21 @@ def scalePointsVertical_SingleZ(Vmode,points,scaleFactor,plotRealSensors=0):
     gridMatX = np.empty((5,2),dtype=float) 
     gridMatZ = np.empty((5,2),dtype=float) 
     
-    for i in range(5):
-        for j in range(2):
+    for i in range(plotGridRows):
+        for j in range(plotGridCols):
             gridMatX[i,j] = points[gridMatIndex[i]+j,1]
             gridMatZ[i,j] = points[gridMatIndex[i]+j,3]
     
     
-    
-    for i in range(5):
+    '''
+    for i in range(plotGridRows):
         plt.plot(gridMatX[i,:],gridMatZ[i,:],'gray',zorder=1)
         
-    for i in range(2):
+        
+    for i in range(plotGridCols):
         plt.plot(gridMatX[:,i],gridMatZ[:,i],'gray',zorder=1) 
+     '''   
+        
     #gridMatX= gridMatX + modeMatrix_VX
     gridMatZ= gridMatZ + modeMatrix_VZ
     
@@ -238,9 +289,9 @@ def scalePointsVertical_SingleZ(Vmode,points,scaleFactor,plotRealSensors=0):
     if(plotRealSensors == 1):    
         realSensorListX = [gridMatX[1,0],gridMatX[2,0],gridMatX[3,0],gridMatX[2,1]]
         realSensorListY = [gridMatZ[1,0],gridMatZ[2,0],gridMatZ[3,0],gridMatZ[2,1]]
-        sensorID = ['3971','3972','3973','3975']
+        
         for i in range(len(realSensorListX)):
-            #plt.text(realSensorListX[i], realSensorListY[i], '%s' % sensorID[i] ,size = 18)
+            plt.text(realSensorListX[i], realSensorListY[i], '%s' % sensorID[i] ,size = 20)
             plt.plot(realSensorListX[i], realSensorListY[i],'o',zorder = 2)
         
     
@@ -249,20 +300,23 @@ def scalePointsVertical_SingleZ(Vmode,points,scaleFactor,plotRealSensors=0):
     
     #plt.plot(eastline_X,eastline_Y,'b')
     #plt.plot(westline_X,westline_Y,'b')
+    leftEdge = [988.31323349475, 102774.89610296187]
+    rightEdge = [237.20618390647, -4065.89048708391]
+    plt.plot(leftEdge,rightEdge,'grey',linewidth =3.0,zorder=1)
     
-    for i in range(5):
+    for i in range(plotGridRows):
         plt.plot(gridMatX[i,:],gridMatZ[i,:],'k',linewidth =3.0,zorder=1)
         
-    for i in range(2):
+    for i in range(plotGridCols):
         plt.plot(gridMatX[:,i],gridMatZ[:,i],'k',linewidth =3.0,zorder=1) 
         
 
     plt.xlabel('Global X')
     plt.ylabel('Global Z')
-    plt.ylim(-50000,50000)
+    plt.ylim(-40000,40000)
 
 
-def scalePointsVertical(Vmode,points,scaleFactor,plotRealSensors=0):
+def scalePointsVertical(Vmode,points,plotRealSensors=0,scaleFactor=10000):
     #This is a function adapted for the visualization of horizontal mode shapes. Displacements in the Y-direction will be scaled only.
     modeRows = int((len(Vmode)-2))
     realMode = np.ones(len(Vmode))
@@ -278,14 +332,12 @@ def scalePointsVertical(Vmode,points,scaleFactor,plotRealSensors=0):
   
     
     for i in range(2,len(realMode)):
-     
-     
-        
+       
         if(i%2 == 0):
             V_input_mode_X[Xindex] = realMode[i]
             Xindex += 1
-        else:
             
+        else:
             
             V_input_mode_Z2[Zindex] = realMode[i]
             if(Zindex==3):
@@ -350,6 +402,7 @@ def scalePointsVertical(Vmode,points,scaleFactor,plotRealSensors=0):
     
     #plt.plot(eastline_X,eastline_Y,'b')
     #plt.plot(westline_X,westline_Y,'b')
+   
     
     for i in range(5):
         plt.plot(gridMatX[i,:],gridMatZ[i,:],'y',linewidth =3.0,zorder=1)
@@ -444,7 +497,82 @@ def git_plotModeShapeComplexityHorizontal(modeShape):
 modeshapeNumb = 1
 
 
+def plotModeShape(modeResult,points,scalefactor=20000):
+    #I want to 
+    #plot mode shape complexity
+    #    use the mode shape complexity functions?
+    #plot mode shapes
+    #    plot points
+    #    Scale points
+    
+    
+    modeResShape = np.shape(modeResult)
+    numberOfModes = modeResShape[1]
+    numberOfNodes = modeResShape[0]
 
+         
+    for i in range(numberOfModes):
+        plt.figure("Mode Shape Complexity, Mode #"+str(i+1))
+        git_plotModeShapeComplexityHorizontal(modeResult[:,i])
+        
+    
+    
+    for i in range(numberOfModes):
+        plt.figure("Modeshape #"+str(i+1))
+        plotSensorLocation_horizontal(points, plotRealSensors = 1)
+        scalePoints(modeResult[:,i].real, points, scalefactor, plotRealSensors = 1)
+        plt.ylim([-20000,20000])
+        
+        
+
+def plotModeShapes_subPlot_horizontal(modeResult,points,scalefactor=10000):
+    
+    
+    
+    modeResShape = np.shape(modeResult)
+    numberOfModes = modeResShape[1]
+    numberOfNodes = modeResShape[0]
+
+    
+    for i in range(numberOfModes):
+        plt.figure("Mode #"+str(i+1))
+        plt.suptitle("Mode #"+str(i+1))
+        plt.subplot(1,2,1)
+        plt.title("Complexity")
+        git_plotModeShapeComplexityHorizontal(modeResult[:,i])
+        plt.subplot(1,2,2)
+        plt.title("Mode Shape")
+        plotSensorLocation_horizontal(points, plotRealSensors = 1)
+        scalePoints(modeResult[:,i].real, points, scalefactor, plotRealSensors = 1)
+        plt.ylim([-20000,20000])
+        
+    
+    
+   
+        
+def plotModeShapes_subPlot_vertical(modeResult, points, scalefactor=10000):   
+         
+    modeResShape = np.shape(modeResult)
+    numbModes = modeResShape[1]
+   
+
+    
+    for i in range(numbModes):
+        plt.figure("Vertical Mode #"+str(i+1))
+        plt.suptitle("Mode #"+str(i+1))
+        plt.subplot(1,2,1)
+        plt.title("Complexity")
+        plotModeShapeComplexityVertical_onlyZ(modeResult[:,i])
+        print(modeResult[:,i])
+        plt.subplot(1,2,2)
+        plt.title("Mode Shape")
+        scalePointsVertical_SingleZ(modeResult[:,i], points, plotRealSensors = 1)
+        plt.ylim([-20000,20000])
+        
+    
+    
+   
+        
 
 
 

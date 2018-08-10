@@ -18,7 +18,6 @@ from matplotlib.axes._axes import Axes
 
 
 
-
 def mainFDD_HV(mat1,mat2,mat3,mat4,sampleFreq,title,figTitle,FDDsolverTitle, peakThresh=-10000, frequencyThresh = 30, writeToFile = 0, horizontal = 1):
     # Frequency Domain Decomposition
     # Input:
